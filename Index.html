@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HGS Projekttage – Workshop-Umfrage</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --ink: #1a1714;
+    --accent: #e8390e;
+    --accent2: #2d6fd4;
+    --accent3: #f0b429;
+    --card: #ffffff;
+    --muted: #8a8279;
+    --border: #d8d0c4;
+    --selected: #e8390e;
+    --selected-light: #fef0ec;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* Header */
+  header {
+    background: var(--ink);
+    color: white;
+    padding: 40px 24px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.18;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: var(--accent3);
+    opacity: 0.12;
+  }
+  .header-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 6vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  header h1 span { color: var(--accent); }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
+    margin-top: 6px;
+  }
+  .date-badge {
+    display: inline-block;
+    margin-top: 18px;
+    background: var(--accent3);
+    color: var(--ink);
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Student info */
+  .student-section {
+    background: var(--card);
+    margin: 20px 16px;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1.5px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .fields-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .field-group input, .field-group select {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field-group input:focus, .field-group select:focus {
+    border-color: var(--accent2);
+  }
+
+  /* Instructions */
+  .instructions {
+    margin: 0 16px 16px;
+    background: linear-gradient(135deg, #1a1714 0%, #2d2420 100%);
+    border-radius: 14px;
+    padding: 20px;
+    color: white;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .instr-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .instr-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .instr-text p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+  }
+
+  /* Counter bar */
+  .counter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1.5px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .counter-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .counter-pills {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--border);
+    border: 2px solid var(--border);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .pill.filled {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  .remaining-badge {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .remaining-badge strong { color: var(--accent); }
+
+  /* Workshops grid */
+  .workshops-section {
+    padding: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Workshop card */
+  .ws-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    position: relative;
+    user-select: none;
+  }
+  .ws-card:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+  .ws-card.selected {
+    border-color: var(--selected);
+    background: var(--selected-light);
+    box-shadow: 0 0 0 3px rgba(232,57,14,0.12);
+  }
+  .ws-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .ws-card.disabled:not(.selected) {
+    pointer-events: none;
+  }
+  .ws-card.selected.disabled { pointer-events: all; opacity: 1; }
+
+  .card-inner {
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .ws-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+    transition: all 0.18s;
+  }
+  .ws-card.selected .ws-number {
+    background: var(--accent);
+    color: white;
+  }
+  .ws-info { flex: 1; min-width: 0; }
+  .ws-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .ws-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .ws-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .meta-tag.grade { color: var(--accent2); border-color: var(--accent2); background: #eef3fc; }
+  .meta-tag.location { color: #2a7a50; border-color: #2a7a50; background: #edf7f2; }
+
+  .check-icon {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+    margin-top: 2px;
+    background: white;
+  }
+  .ws-card.selected .check-icon {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .check-icon svg { display: none; }
+  .ws-card.selected .check-icon svg { display: block; }
+
+  .rank-badge {
+    display: none;
+    position: absolute;
+    top: 12px; right: 12px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    background: var(--accent);
+    color: white;
+    border-radius: 20px;
+    padding: 2px 8px;
+    letter-spacing: 0.05em;
+  }
+  .ws-card.selected .rank-badge { display: block; }
+
+  /* Submit section */
+  .submit-section {
+    margin: 0 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 18px;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 4px;
+  }
+  .submit-btn:hover:not(:disabled) {
+    background: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(232,57,14,0.3);
+  }
+  .submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .submit-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--ink);
+    color: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px;
+    z-index: 999;
+  }
+  .success-screen.show { display: flex; }
+  .success-emoji { font-size: 72px; margin-bottom: 24px; }
+  .success-screen h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+  .success-screen h2 span { color: var(--accent3); }
+  .success-screen p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    max-width: 320px;
+    line-height: 1.5;
+    margin-bottom: 32px;
+  }
+  .success-choices {
+    background: rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: left;
+    max-width: 360px;
+    width: 100%;
+    margin-bottom: 32px;
+  }
+  .success-choices h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 12px;
+  }
+  .choice-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+  }
+  .choice-item:last-child { border-bottom: none; }
+  .choice-rank {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--accent3);
+    width: 20px;
+    flex-shrink: 0;
+  }
+  .reset-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 12px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .reset-btn:hover { background: rgba(255,255,255,0.1); }
+
+  @media (min-width: 480px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (min-width: 700px) {
+    header { padding: 48px 40px 36px; }
+    .student-section, .workshops-section, .submit-section { margin-left: 24px; margin-right: 24px; }
+    .counter-bar { padding: 10px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Hohe-Giethorst-Schule · Bocholt</div>
+  <h1>Projekttage<br><span>Workshop-Wahl</span></h1>
+  <p class="header-sub">„Die HGS übernimmt Verantwortung"</p>
+  <div class="date-badge">📅 08. – 10. Juni 2026</div>
+</header>
+
+<!-- Student Info -->
+<div class="student-section">
+  <div class="section-title">Deine Angaben</div>
+  <div class="fields-row">
+    <div class="field-group" style="grid-column: 1/-1">
+      <label>Name</label>
+      <input type="text" id="studentName" placeholder="Vor- und Nachname">
+    </div>
+    <div class="field-group">
+      <label>Klasse</label>
+      <select id="studentClass">
+        <option value="">— wählen —</option>
+        <option>5a</option><option>5b</option><option>5c</option>
+        <option>6a</option><option>6b</option><option>6c</option>
+        <option>7a</option><option>7b</option><option>7c</option>
+        <option>8a</option><option>8b</option><option>8c</option>
+        <option>9a</option><option>9b</option><option>9c</option>
+        <option>10a</option><option>10b</option><option>10c</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Jahrgang</label>
+      <select id="studentGrade">
+        <option value="">— wählen —</option>
+        <option value="5">5. Klasse</option>
+        <option value="6">6. Klasse</option>
+        <option value="7">7. Klasse</option>
+        <option value="8">8. Klasse</option>
+        <option value="9">9. Klasse</option>
+        <option value="10">10. Klasse</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Instructions -->
+<div class="instructions">
+  <div class="instr-icon">👆</div>
+  <div class="instr-text">
+    <h3>So funktioniert's</h3>
+    <p>Tippe auf die Workshops, die dich interessieren. Du kannst genau <strong>7 Wünsche</strong> angeben – in der Reihenfolge, in der du klickst (Wunsch 1, 2, 3 …).</p>
+  </div>
+</div>
+
+<!-- Sticky counter -->
+<div class="counter-bar">
+  <div>
+    <div class="counter-label">Deine Wünsche</div>
+  </div>
+  <div class="counter-pills" id="counterPills">
+    <div class="pill" id="p1">1</div>
+    <div class="pill" id="p2">2</div>
+    <div class="pill" id="p3">3</div>
+    <div class="pill" id="p4">4</div>
+    <div class="pill" id="p5">5</div>
+    <div class="pill" id="p6">6</div>
+    <div class="pill" id="p7">7</div>
+  </div>
+  <div class="remaining-badge" id="remainingBadge"><strong>7</strong> übrig</div>
+</div>
+
+<!-- Workshop Cards -->
+<div class="workshops-section">
+  <div class="grid" id="workshopGrid"></div>
+</div>
+
+<!-- Submit -->
+<div class="submit-section" style="margin-top:20px;">
+  <button class="submit-btn" id="submitBtn" disabled onclick="submitForm()">
+    Jetzt absenden →
+  </button>
+  <p class="submit-hint" id="submitHint">Wähle 7 Workshops, um abzusenden.</p>
+</div>
+
+<!-- Success screen -->
+<div class="success-screen" id="successScreen">
+  <div class="success-emoji">🎉</div>
+  <h2>Danke,<br><span id="successName">!</span></h2>
+  <p>Deine Workshop-Wünsche wurden erfolgreich abgeschickt. Bis zum 30. April musst du zugeordnet sein.</p>
+  <div class="success-choices">
+    <h4>Deine 7 Wünsche</h4>
+    <div id="choicesList"></div>
+  </div>
+  <button class="reset-btn" onclick="resetForm()">Neue Antwort abgeben</button>
+</div>
+
+<script>
+const MAX_CHOICES = 7;
+let selected = []; // ordered array of workshop ids
+
+const workshops = [
+  { id: 1, name: "Tierheim", desc: "Erlebe den Beruf des Tierpflegers und arbeite mit Tieren im Tierheim Bocholt.", grades: "7–10", location: "Tierheim Bocholt", maxStudents: 10 },
+  { id: 2, name: "Kardinal-Diepenbrock I", desc: "Besuche die Bewohner des Heims: Café-Ausflug, basteln und spielen.", grades: "5–10", location: "Kardinal-Diepenbrock-Heim", maxStudents: 10 },
+  { id: 3, name: "Kardinal-Diepenbrock II (Kneipp)", desc: "Erfahre mehr über Kneipp, gesunde Ernährung und was deinem Körper gut tut.", grades: "5–10", location: "Kardinal-Diepenbrock-Heim", maxStudents: 10 },
+  { id: 4, name: "Krav Maga", desc: "Stärke dein Selbstbewusstsein und lerne Selbstverteidigung.", grades: "5–10", location: "Sporthalle HGS", maxStudents: 20 },
+  { id: 5, name: "Maker Space", desc: "Arbeite mit computergesteuerten Maschinen und erstelle eigene Produkte.", grades: "5–10", location: "Maker Space", maxStudents: 15 },
+  { id: 6, name: "Graffiti", desc: "Lass deiner Kreativität mit der Sprühdose freien Lauf!", grades: "7–10", location: "Schule", maxStudents: 20 },
+  { id: 7, name: "Toilettengestaltung", desc: "Verschönere die Schultoiletten – du kannst etwas verändern!", grades: "5–10", location: "Schule", maxStudents: 10 },
+  { id: 8, name: "Stolpersteine", desc: "Erkunde das Leben jüdischer Einwohner Bocholts vor 1945 und fahre nach Dorsten.", grades: "7–10", location: "Bocholt & Dorsten", maxStudents: 10 },
+  { id: 9, name: "TUB Bocholt (Sport & Ernährung)", desc: "Cardio, Krafttraining, Athletik und ein Ernährungsworkshop im TUB.", grades: "8–10", location: "TUB Bocholt", maxStudents: 20 },
+  { id: 10, name: "Interkulturelles Training", desc: "Spannende Übungen und Gespräche rund um Vielfalt und neue Perspektiven.", grades: "5–10", location: "Schule", maxStudents: 10 },
+  { id: 11, name: "Insektenhotels", desc: "Baue handwerklich ein Insektenhotel für das Schulgelände.", grades: "5–10", location: "Schule", maxStudents: 10 },
+  { id: 12, name: "Stadtwald", desc: "Erkunde die Natur und lerne unsere tierischen Nachbarn im Stadtwald kennen.", grades: "5–10", location: "Schule / Stadtwald", maxStudents: 10 },
+  { id: 13, name: "Weltreligionen", desc: "Religion zum Anfassen – besuche jeden Tag eine der drei Weltreligionen!", grades: "5–10", location: "Isselburg / Bocholt / Essen", maxStudents: 15 },
+  { id: 14, name: "Stadtbibliothek – Hörspiel", desc: "Erstelle mithilfe moderner Technik ein eigenes Hörspiel.", grades: "6–7", location: "Stadtbücherei Bocholt", maxStudents: 10 },
+  { id: 15, name: "Social Media (Workshop 15)", desc: "Erstelle interessante Social-Media-Inhalte.", grades: "7–10", location: "Schule / Lernwerk", maxStudents: 10 },
+  { id: 16, name: "Mein Körper – gesund bleiben", desc: "Fastfood, aber gesund? Lerne Basics für eine gesunde Ernährung.", grades: "7–10", location: "BK West", maxStudents: 8 },
+  { id: 17, name: "DLRG", desc: "Wasserrettung und Schwimmsicherheit – Voraussetzung: Bronze-Abzeichen.", grades: "5–10", location: "DLRG", maxStudents: 20 },
+  { id: 18, name: "Polizei – Demokratie stärken", desc: "Lerne mit der Polizei, wie Demokratie im Alltag gelebt wird.", grades: "5–10", location: "Schule", maxStudents: 10 },
+  { id: 19, name: "Musik, Kunst und Schauspiel", desc: "Kreativ werden in Musik, bildender Kunst und auf der Bühne.", grades: "5–10", location: "Musikschule Bocholt", maxStudents: 10 },
+  { id: 20, name: "Kochen – Einfach und gesund", desc: "Lerne die Basics für schnelle, gesunde Küche und erstelle ein Kochbuch.", grades: "5–10", location: "Küche HGS", maxStudents: 15 },
+  { id: 21, name: "Social Media – Aktuelles", desc: "Halte deine Mitschüler:innen täglich über Workshop-Ereignisse informiert.", grades: "5–10", location: "HGS", maxStudents: 5 },
+  { id: 22, name: "Verantwortung für andere (BK-West)", desc: "Workshop am BK-West – Details folgen.", grades: "–", location: "BK West", maxStudents: 20 },
+  { id: 23, name: "Upcycling", desc: "Gib alten Dingen ein neues Leben – kreatives Upcycling-Projekt.", grades: "–", location: "–", maxStudents: 20 },
+];
+
+function renderCards() {
+  const grid = document.getElementById('workshopGrid');
+  grid.innerHTML = '';
+  workshops.forEach(ws => {
+    const isSelected = selected.includes(ws.id);
+    const rank = selected.indexOf(ws.id) + 1;
+    const isFull = selected.length >= MAX_CHOICES && !isSelected;
+
+    const card = document.createElement('div');
+    card.className = `ws-card${isSelected ? ' selected' : ''}${isFull ? ' disabled' : ''}`;
+    card.dataset.id = ws.id;
+    card.onclick = () => toggleCard(ws.id);
+
+    card.innerHTML = `
+      <div class="rank-badge">Wunsch ${rank}</div>
+      <div class="card-inner">
+        <div class="ws-number">WS ${String(ws.id).padStart(2,'0')}</div>
+        <div class="ws-info">
+          <div class="ws-name">${ws.name}</div>
+          <div class="ws-desc">${ws.desc}</div>
+          <div class="ws-meta">
+            <span class="meta-tag grade">Klasse ${ws.grades}</span>
+            <span class="meta-tag location">📍 ${ws.location}</span>
+            <span class="meta-tag">max. ${ws.maxStudents} Pers.</span>
+          </div>
+        </div>
+        <div class="check-icon">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function toggleCard(id) {
+  if (selected.includes(id)) {
+    selected = selected.filter(x => x !== id);
+  } else {
+    if (selected.length >= MAX_CHOICES) return;
+    selected.push(id);
+  }
+  updateUI();
+}
+
+function updateUI() {
+  renderCards();
+  // pills
+  for (let i = 1; i <= MAX_CHOICES; i++) {
+    const pill = document.getElementById('p' + i);
+    pill.className = 'pill' + (i <= selected.length ? ' filled' : '');
+  }
+  // remaining
+  const rem = MAX_CHOICES - selected.length;
+  const badge = document.getElementById('remainingBadge');
+  badge.innerHTML = rem === 0 ? '✓ <strong style="color:var(--accent)">Fertig!</strong>' : `<strong>${rem}</strong> übrig`;
+
+  // submit
+  const btn = document.getElementById('submitBtn');
+  const hint = document.getElementById('submitHint');
+  btn.disabled = selected.length < MAX_CHOICES;
+  if (selected.length < MAX_CHOICES) {
+    hint.textContent = `Wähle noch ${MAX_CHOICES - selected.length} Workshop${MAX_CHOICES - selected.length !== 1 ? 's' : ''}.`;
+  } else {
+    hint.textContent = 'Alle 7 Wünsche gewählt – bereit zum Absenden!';
+  }
+}
+
+async function submitForm() {
+  const name = document.getElementById('studentName').value.trim();
+  const cls = document.getElementById('studentClass').value;
+  const grade = document.getElementById('studentGrade').value;
+  if (!name) { alert('Bitte gib deinen Namen ein.'); return; }
+  if (!cls) { alert('Bitte wähle deine Klasse.'); return; }
+  if (selected.length < MAX_CHOICES) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Wird gesendet…';
+
+  const payload = {
+    name,
+    klasse: cls,
+    jahrgang: grade,
+    timestamp: new Date().toISOString(),
+  };
+  selected.forEach((id, i) => {
+    const ws = workshops.find(w => w.id === id);
+    payload[`wunsch_${i+1}`] = `WS ${String(id).padStart(2,'0')} – ${ws.name}`;
+  });
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOvCgfcubADOpyLKJdCNFcZX_PR9JBVRu-YYJooETiY-AszRd9Ral09TAS9CM9xNUPJg/exec';
+
+     try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    showSuccess(name);
+  } catch (err) {
+    alert('Fehler beim Senden. Bitte versuche es erneut oder wende dich an eine Lehrkraft.');
+    btn.disabled = false;
+    btn.textContent = 'Jetzt absenden →';
+  }
+}
+
+function showSuccess(name) {
+  document.getElementById('successName').textContent = name + '!';
+  const list = document.getElementById('choicesList');
+  list.innerHTML = '';
+  selected.forEach((id, i) => {
+    const ws = workshops.find(w => w.id === id);
+    const item = document.createElement('div');
+    item.className = 'choice-item';
+    item.innerHTML = `<span class="choice-rank">${i+1}.</span> WS ${String(id).padStart(2,'0')} – ${ws.name}`;
+    list.appendChild(item);
+  });
+  document.getElementById('successScreen').classList.add('show');
+}
+
+function resetForm() {
+  selected = [];
+  document.getElementById('studentName').value = '';
+  document.getElementById('studentClass').value = '';
+  document.getElementById('studentGrade').value = '';
+  document.getElementById('successScreen').classList.remove('show');
+  updateUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// init
+renderCards();
+updateUI();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"9e0f0acffbde465da3426adfddc1b175","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
